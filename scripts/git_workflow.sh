@@ -64,8 +64,11 @@ echo "Creating and switching to branch: $BRANCH_NAME"
 git checkout -b "$BRANCH_NAME"
 
 # Step 2: Create plan and tasks markdown files
-PLAN_FILE="plan-${TIMESTAMP}.md"
-TASKS_FILE="tasks-${TIMESTAMP}.md"
+# Ensure the doc/sessions directory exists
+mkdir -p doc/sessions
+
+PLAN_FILE="doc/sessions/plan-${TIMESTAMP}.md"
+TASKS_FILE="doc/sessions/tasks-${TIMESTAMP}.md"
 
 echo "Creating plan file: $PLAN_FILE"
 touch "$PLAN_FILE"

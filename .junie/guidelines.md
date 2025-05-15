@@ -15,6 +15,8 @@ QuizMaster/
 ├── .venv/                  # Virtual environment (already set up)
 ├── .idea/                  # PyCharm IDE configuration
 ├── .junie/                 # Project guidelines and documentation
+├── doc/                    # Documentation
+│   └── sessions/           # Development session files (plan and tasks)
 ├── src/                    # Source code
 │   └── quizmaster/         # Main package
 │       ├── __init__.py
@@ -106,7 +108,7 @@ python scripts/example_script.py
 3. Implement your changes with tests
 4. Run tests to ensure everything works
 5. The git_workflow.sh script will automatically:
-   - Create plan and tasks markdown files
+   - Create plan and tasks markdown files in the doc/sessions/ directory
    - Add your changes to git
    - Commit your work
    - Push your branch
@@ -121,8 +123,9 @@ You can also manually execute the Git workflow commands:
 git checkout -b feature/{your-name}/{yyyy-MM-dd_hh-mm}
 
 # Step 2: Create plan and tasks markdown files
-touch plan-{yyyy-MM-dd_hh-mm}.md
-touch tasks-{yyyy-MM-dd_hh-mm}.md
+mkdir -p doc/sessions
+touch doc/sessions/plan-{yyyy-MM-dd_hh-mm}.md
+touch doc/sessions/tasks-{yyyy-MM-dd_hh-mm}.md
 
 # Step 3: Add your work to git
 git add .

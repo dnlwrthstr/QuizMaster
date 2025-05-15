@@ -11,6 +11,8 @@ QuizMaster is a Python-based application that provides an interactive quiz exper
 ```
 QuizMaster/
 ├── .venv/                  # Virtual environment
+├── doc/                    # Documentation
+│   └── sessions/           # Development session files (plan and tasks)
 ├── src/                    # Source code
 │   └── quizmaster/         # Main package
 │       ├── __init__.py
