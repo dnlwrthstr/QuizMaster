@@ -95,11 +95,11 @@ class BackendTester:
     def start_api_server(self):
         """Start the API server in a subprocess."""
         self.print_info("Starting API server...")
-        
+
         # Get the project root directory
         script_dir = Path(__file__).parent
         project_root = script_dir.parent
-        
+
         # Start the API in a subprocess
         self.api_process = subprocess.Popen(
             ["python", "-m", "quizmaster.main"],
@@ -108,7 +108,7 @@ class BackendTester:
             stderr=subprocess.PIPE,
             preexec_fn=os.setsid  # Create a new process group
         )
-        
+
         # Wait for the API to become available
         if not self.wait_for_api():
             # Kill the API process if it didn't start properly
@@ -135,9 +135,9 @@ class BackendTester:
                     return True
             except requests.exceptions.RequestException:
                 pass
-            
+
             time.sleep(delay)
-        
+
         self.print_error(f"API did not become available after {max_attempts} attempts")
         return False
 
@@ -145,7 +145,7 @@ class BackendTester:
         """Run a test function and track the result."""
         self.test_results["total"] += 1
         result = test_func(*args, **kwargs)
-        if result:
+        if result is not None and result is not False:
             self.test_results["passed"] += 1
         else:
             self.test_results["failed"] += 1
@@ -157,10 +157,10 @@ class BackendTester:
         try:
             url = f"{self.base_url}/api"
             self.log_request("GET", url)
-            
+
             response = requests.get(url)
             self.log_response(response)
-            
+
             if response.status_code == 200 and "Welcome to QuizMaster API" in response.text:
                 self.print_success("API root endpoint is working")
                 return True
@@ -177,10 +177,10 @@ class BackendTester:
         try:
             url = f"{self.base_url}/quizzes"
             self.log_request("GET", url)
-            
+
             response = requests.get(url)
             self.log_response(response)
-            
+
             if response.status_code == 200:
                 quizzes = response.json()
                 self.print_success(f"Retrieved {len(quizzes)} quizzes")
@@ -202,10 +202,10 @@ class BackendTester:
                 "description": "A quiz created by the test script"
             }
             self.log_request("POST", url, quiz_data)
-            
+
             response = requests.post(url, json=quiz_data)
             self.log_response(response)
-            
+
             if response.status_code == 201:
                 quiz = response.json()
                 self.print_success(f"Created quiz with ID: {quiz['id']}")
@@ -223,10 +223,10 @@ class BackendTester:
         try:
             url = f"{self.base_url}/quizzes/{quiz_id}"
             self.log_request("GET", url)
-            
+
             response = requests.get(url)
             self.log_response(response)
-            
+
             if response.status_code == 200:
                 quiz = response.json()
                 self.print_success(f"Retrieved quiz {quiz_id}: {quiz['title']}")
@@ -249,10 +249,10 @@ class BackendTester:
                 "correct_answer_index": 0
             }
             self.log_request("POST", url, question_data)
-            
+
             response = requests.post(url, json=question_data)
             self.log_response(response)
-            
+
             if response.status_code == 200:
                 self.print_success(f"Added question to quiz {quiz_id}")
                 return 0  # Return the question ID (first question has ID 0)
@@ -269,10 +269,10 @@ class BackendTester:
         try:
             url = f"{self.base_url}/quizzes/{quiz_id}/questions/{question_id}"
             self.log_request("GET", url)
-            
+
             response = requests.get(url)
             self.log_response(response)
-            
+
             if response.status_code == 200:
                 question = response.json()
                 self.print_success(f"Retrieved question {question_id}: {question['text']}")
@@ -293,16 +293,16 @@ class BackendTester:
                 "answer_index": answer_index
             }
             self.log_request("POST", url, submission_data)
-            
+
             response = requests.post(url, json=submission_data)
             self.log_response(response)
-            
+
             if response.status_code == 200:
                 result = response.json()
                 if result["is_correct"]:
                     self.print_success(f"Submitted correct answer: {result['message']}")
                 else:
-                    self.print_info(f"Submitted incorrect answer: {result['message']}")
+                    self.print_info(f"Submitted incorrect answer: {result['message']} (This is expected behavior, not a test failure)")
                 return True
             else:
                 self.print_error(f"Failed to submit answer: {response.text}")
@@ -317,10 +317,10 @@ class BackendTester:
         try:
             url = f"{self.base_url}/init-default-quiz"
             self.log_request("POST", url)
-            
+
             response = requests.post(url)
             self.log_response(response)
-            
+
             if response.status_code == 200:
                 quiz = response.json()
                 self.print_success(f"Initialized default quiz with ID: {quiz['id']}")
@@ -335,50 +335,50 @@ class BackendTester:
     def run_all_tests(self):
         """Run all API tests."""
         self.print_header("Starting Backend Tests")
-        
+
         # Test API root
         if not self.run_test(self.test_api_root):
             return False
-        
+
         # Test getting all quizzes
         self.run_test(self.test_get_quizzes)
-        
+
         # Test creating a quiz
         quiz_id = self.run_test(self.test_create_quiz)
         if quiz_id is None:
             return False
-        
+
         # Test getting the quiz
         if not self.run_test(self.test_get_quiz, quiz_id):
             return False
-        
+
         # Test adding a question
         question_id = self.run_test(self.test_add_question, quiz_id)
         if question_id is None:
             return False
-        
+
         # Test getting the question
         if not self.run_test(self.test_get_question, quiz_id, question_id):
             return False
-        
+
         # Test submitting a correct answer
         if not self.run_test(self.test_submit_answer, quiz_id, question_id, 0):
             return False
-        
+
         # Test submitting an incorrect answer
         self.run_test(self.test_submit_answer, quiz_id, question_id, 1)
-        
+
         # Test initializing the default quiz
         default_quiz_id = self.run_test(self.test_init_default_quiz)
         if default_quiz_id is None:
             return False
-        
+
         # Test getting the default quiz
         self.run_test(self.test_get_quiz, default_quiz_id)
-        
+
         # Print test summary
         self.print_test_summary()
-        
+
         return self.test_results["failed"] == 0
 
     def print_test_summary(self):
@@ -387,7 +387,7 @@ class BackendTester:
         print(f"Total tests: {self.test_results['total']}")
         print(f"Passed: {GREEN}{self.test_results['passed']}{RESET}")
         print(f"Failed: {RED}{self.test_results['failed']}{RESET}")
-        
+
         if self.test_results["failed"] == 0:
             self.print_success("All tests passed!")
         else:
@@ -407,9 +407,9 @@ def parse_arguments():
 def main():
     """Main function to run the backend tests."""
     args = parse_arguments()
-    
+
     tester = BackendTester(host=args.host, port=args.port, verbose=args.verbose)
-    
+
     # Check if the API is already running
     try:
         response = requests.get(f"http://{args.host}:{args.port}/api")
@@ -419,15 +419,15 @@ def main():
         if args.no_start:
             tester.print_error("API is not running and --no-start option is set")
             return 1
-        
+
         tester.print_info("API is not running, attempting to start it...")
         tester.start_api_server()
-        
+
         try:
             success = tester.run_all_tests()
         finally:
             tester.stop_api_server()
-    
+
     return 0 if success else 1
 
 
