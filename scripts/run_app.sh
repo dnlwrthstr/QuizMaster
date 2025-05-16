@@ -26,10 +26,26 @@ else
     pip install -e "$PROJECT_ROOT"
 fi
 
-# Run the application
-echo "Starting QuizMaster application..."
+# Start the frontend server in the background
+echo "Starting frontend server on port 8090..."
+cd "$PROJECT_ROOT/frontend"
+node server.js &
+FRONTEND_PID=$!
+
+# Run the backend application on port 8091
+echo "Starting QuizMaster backend application on port 8091..."
 cd "$PROJECT_ROOT"
 python -m quizmaster.main
 
-# Deactivate the virtual environment when the application is stopped
-trap "deactivate; echo 'Virtual environment deactivated.'" EXIT
+# Cleanup function to kill the frontend server when the script exits
+cleanup() {
+    echo "Stopping frontend server..."
+    kill $FRONTEND_PID
+    echo "Deactivating virtual environment..."
+    deactivate
+    echo "Cleanup complete."
+}
+
+# Register the cleanup function to run when the script exits
+trap cleanup EXIT
+EOFo 'Virtual environment deactivated.'" EXIT
