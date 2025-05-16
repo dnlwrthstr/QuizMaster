@@ -286,8 +286,20 @@ async function startQuiz() {
 function showQuestion(index) {
     const question = quizQuestions[index];
 
+    // Log the question object to debug
+    console.log('Question object:', question);
+
     // Update question text
-    document.getElementById('question-text').textContent = question.text;
+    // Check if question.text exists, otherwise try to use question.question
+    // If neither exists, use a default message
+    if (question.text) {
+        document.getElementById('question-text').textContent = question.text;
+    } else if (question.question) {
+        document.getElementById('question-text').textContent = question.question;
+    } else {
+        console.error('Question text not found in question object:', question);
+        document.getElementById('question-text').textContent = 'Error: Question text not available.';
+    }
 
     // Render answer options
     const answersList = document.getElementById('answers-list');
