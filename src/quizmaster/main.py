@@ -9,9 +9,11 @@ from typing import List, Optional, Dict, Any
 from fastapi import FastAPI, HTTPException, status
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import uvicorn
 import os
+import pathlib
 
 from quizmaster.services.quiz_bot import QuizBot
 from quizmaster.models.quiz import Quiz
@@ -64,6 +66,21 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins in development
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all methods
+    allow_headers=["*"],  # Allow all headers
+)
+
+# Get the project root directory
+ROOT_DIR = pathlib.Path(__file__).parent.parent.parent
+
+# Mount the frontend static files
+app.mount("/frontend", StaticFiles(directory=str(ROOT_DIR / "frontend")), name="frontend")
+
 
 
 # In-memory storage for quizzes
@@ -98,7 +115,12 @@ def quiz_to_model(quiz: Quiz, quiz_id: int) -> QuizModel:
 # API Routes
 @app.get("/")
 async def root():
-    """Root endpoint that returns a welcome message."""
+    """Root endpoint that serves the frontend application."""
+    return FileResponse(str(ROOT_DIR / "frontend" / "index.html"))
+
+@app.get("/api")
+async def api_root():
+    """API root endpoint that returns a welcome message."""
     return {"message": "Welcome to QuizMaster API!"}
 
 

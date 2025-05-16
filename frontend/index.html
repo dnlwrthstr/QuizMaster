@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizMaster</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>QuizMaster</h1>
+            <nav>
+                <ul>
+                    <li><a href="#" id="home-link" class="active">Home</a></li>
+                    <li><a href="#" id="create-quiz-link">Create Quiz</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Home Page / Quiz List -->
+        <section id="quiz-list-section" class="page active">
+            <h2>Available Quizzes</h2>
+            <button id="init-default-quiz" class="btn primary">Initialize Default Quiz</button>
+            <div id="quiz-list" class="card-container">
+                <!-- Quiz cards will be dynamically added here -->
+                <div class="loading">Loading quizzes...</div>
+            </div>
+        </section>
+
+        <!-- Create Quiz Page -->
+        <section id="create-quiz-section" class="page">
+            <h2>Create New Quiz</h2>
+            <form id="create-quiz-form">
+                <div class="form-group">
+                    <label for="quiz-title">Quiz Title</label>
+                    <input type="text" id="quiz-title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="quiz-description">Description</label>
+                    <textarea id="quiz-description" name="description" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn primary">Create Quiz</button>
+            </form>
+        </section>
+
+        <!-- Quiz Detail Page -->
+        <section id="quiz-detail-section" class="page">
+            <div class="quiz-header">
+                <h2 id="quiz-detail-title">Quiz Title</h2>
+                <p id="quiz-detail-description">Quiz description will appear here.</p>
+            </div>
+            <div class="quiz-actions">
+                <button id="add-question-btn" class="btn secondary">Add Question</button>
+                <button id="start-quiz-btn" class="btn primary">Start Quiz</button>
+            </div>
+            <div id="question-list">
+                <!-- Questions will be dynamically added here -->
+            </div>
+        </section>
+
+        <!-- Add Question Page -->
+        <section id="add-question-section" class="page">
+            <h2>Add Question</h2>
+            <form id="add-question-form">
+                <div class="form-group">
+                    <label for="question-text">Question</label>
+                    <input type="text" id="question-text" name="text" required>
+                </div>
+                <div id="answers-container">
+                    <div class="form-group answer-group">
+                        <label>Answer 1</label>
+                        <input type="text" name="answers[]" required>
+                        <input type="radio" name="correct_answer" value="0" checked> Correct
+                    </div>
+                    <div class="form-group answer-group">
+                        <label>Answer 2</label>
+                        <input type="text" name="answers[]" required>
+                        <input type="radio" name="correct_answer" value="1"> Correct
+                    </div>
+                </div>
+                <button type="button" id="add-answer-btn" class="btn secondary">Add Another Answer</button>
+                <button type="submit" class="btn primary">Add Question</button>
+            </form>
+        </section>
+
+        <!-- Take Quiz Page -->
+        <section id="take-quiz-section" class="page">
+            <div class="quiz-header">
+                <h2 id="take-quiz-title">Quiz Title</h2>
+                <div id="quiz-progress">Question <span id="current-question">1</span> of <span id="total-questions">5</span></div>
+            </div>
+            <div id="question-container">
+                <h3 id="question-text">Question text will appear here.</h3>
+                <div id="answers-list">
+                    <!-- Answer options will be dynamically added here -->
+                </div>
+            </div>
+            <div id="feedback-container" class="hidden">
+                <div id="feedback-message"></div>
+                <button id="next-question-btn" class="btn primary">Next Question</button>
+            </div>
+            <div id="quiz-complete" class="hidden">
+                <h3>Quiz Complete!</h3>
+                <p>You've completed the quiz. Your score: <span id="final-score">0</span>/<span id="total-score">0</span></p>
+                <button id="return-to-quizzes-btn" class="btn primary">Return to Quizzes</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 QuizMaster. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
