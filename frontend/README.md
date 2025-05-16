@@ -68,7 +68,7 @@ The frontend communicates with the backend API using fetch requests. The main AP
 ## Usage
 
 1. Start the backend server (the QuizMaster FastAPI application)
-2. Access the application at `http://localhost:8091`
+2. Access the application at `http://localhost:8090`
 3. Use the navigation menu to switch between viewing quizzes and creating new ones
 
 ## Development
