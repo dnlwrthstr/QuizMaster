@@ -4,8 +4,8 @@ let currentQuestionIndex = 0;
 let quizQuestions = [];
 let userScore = 0;
 
-// API URL (assuming the backend is running on the same host)
-const API_BASE_URL = 'http://localhost:8090';
+// API URL (backend API running on port 8091)
+const API_BASE_URL = 'http://localhost:8091';
 
 // DOM Elements
 const homeLink = document.getElementById('home-link');

@@ -78,8 +78,8 @@ app.add_middleware(
 # Get the project root directory
 ROOT_DIR = pathlib.Path(__file__).parent.parent.parent
 
-# Mount the frontend static files
-app.mount("/frontend", StaticFiles(directory=str(ROOT_DIR / "frontend")), name="frontend")
+# API is now separate from frontend
+# Frontend is served on port 8090 by a separate server
 
 
 
@@ -113,10 +113,6 @@ def quiz_to_model(quiz: Quiz, quiz_id: int) -> QuizModel:
 
 
 # API Routes
-@app.get("/")
-async def root():
-    """Root endpoint that serves the frontend application."""
-    return FileResponse(str(ROOT_DIR / "frontend" / "index.html"))
 
 @app.get("/api")
 async def api_root():
