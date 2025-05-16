@@ -64,9 +64,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Mount static files directory
-static_dir = os.path.join(os.path.dirname(__file__), "static")
-app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 
 # In-memory storage for quizzes
