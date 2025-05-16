@@ -292,9 +292,9 @@ function showQuestion(index) {
     // Update question text
     // Check if question.text exists, otherwise try to use question.question
     // If neither exists, use a default message
-    if (question.text) {
+    if (question && question.text) {
         document.getElementById('question-text').textContent = question.text;
-    } else if (question.question) {
+    } else if (question && question.question) {
         document.getElementById('question-text').textContent = question.question;
     } else {
         console.error('Question text not found in question object:', question);
@@ -305,14 +305,20 @@ function showQuestion(index) {
     const answersList = document.getElementById('answers-list');
     answersList.innerHTML = '';
 
-    question.answers.forEach((answer, i) => {
-        const answerButton = document.createElement('button');
-        answerButton.className = 'answer-option';
-        answerButton.textContent = answer.text;
-        answerButton.setAttribute('data-index', i);
-        answerButton.addEventListener('click', () => selectAnswer(i));
-        answersList.appendChild(answerButton);
-    });
+    if (question && question.answers && Array.isArray(question.answers)) {
+        question.answers.forEach((answer, i) => {
+            if (answer && typeof answer === 'object') {
+                const answerButton = document.createElement('button');
+                answerButton.className = 'answer-option';
+                answerButton.textContent = answer.text || 'Answer text not available';
+                answerButton.setAttribute('data-index', i);
+                answerButton.addEventListener('click', () => selectAnswer(i));
+                answersList.appendChild(answerButton);
+            }
+        });
+    } else {
+        console.error('Question answers not found or not an array:', question);
+    }
 }
 
 async function selectAnswer(answerIndex) {
@@ -337,13 +343,20 @@ async function selectAnswer(answerIndex) {
             selectedButton.classList.add('incorrect');
 
             // Highlight correct answer if available
-            if (result.correct_answer) {
+            if (result.correct_answer && 
+                quizQuestions && 
+                quizQuestions[currentQuestionIndex] && 
+                quizQuestions[currentQuestionIndex].answers && 
+                Array.isArray(quizQuestions[currentQuestionIndex].answers)) {
+
                 const correctAnswerIndex = quizQuestions[currentQuestionIndex].answers
-                    .findIndex(answer => answer.is_correct);
+                    .findIndex(answer => answer && answer.is_correct);
 
                 if (correctAnswerIndex >= 0) {
                     const correctButton = document.querySelector(`.answer-option[data-index="${correctAnswerIndex}"]`);
-                    correctButton.classList.add('correct');
+                    if (correctButton) {
+                        correctButton.classList.add('correct');
+                    }
                 }
             }
         }
