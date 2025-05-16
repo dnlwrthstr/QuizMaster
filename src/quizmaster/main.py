@@ -230,7 +230,7 @@ def main():
 
     This function starts the FastAPI application using Uvicorn.
     """
-    uvicorn.run("quizmaster.main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("quizmaster.main:app", host="0.0.0.0", port=8090, reload=True)
 
 
 if __name__ == "__main__":
