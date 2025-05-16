@@ -68,11 +68,6 @@ app = FastAPI(
 static_dir = os.path.join(os.path.dirname(__file__), "static")
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
-# Add a route for favicon.ico
-@app.get("/favicon.ico", include_in_schema=False)
-async def favicon():
-    favicon_path = os.path.join(static_dir, "favicon.ico")
-    return FileResponse(favicon_path)
 
 # In-memory storage for quizzes
 quizzes = {}
@@ -230,7 +225,7 @@ def main():
 
     This function starts the FastAPI application using Uvicorn.
     """
-    uvicorn.run("quizmaster.main:app", host="0.0.0.0", port=8090, reload=True)
+    uvicorn.run("quizmaster.main:app", host="0.0.0.0", port=8091, reload=True)
 
 
 if __name__ == "__main__":
