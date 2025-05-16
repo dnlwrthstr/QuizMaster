@@ -23,7 +23,23 @@ This document provides instructions on how to run the QuizMaster application, in
 
 The backend is a FastAPI application that runs on port 8091.
 
-To start the backend:
+### Using the Run Script (Recommended)
+
+The easiest way to run the backend is to use the provided run script:
+
+```bash
+# From the project root directory
+./scripts/run_app.sh
+```
+
+This script will:
+- Activate the virtual environment (or create one if it doesn't exist)
+- Install dependencies if needed
+- Start the FastAPI application on port 8091
+
+### Manual Method
+
+Alternatively, you can start the backend manually:
 
 ```bash
 # From the project root directory
