@@ -290,12 +290,9 @@ function showQuestion(index) {
     console.log('Question object:', question);
 
     // Update question text
-    // Check if question.text exists, otherwise try to use question.question
-    // If neither exists, use a default message
+    // The backend sends the question text in the 'text' property
     if (question && question.text) {
         document.getElementById('question-text').textContent = question.text;
-    } else if (question && question.question) {
-        document.getElementById('question-text').textContent = question.question;
     } else {
         console.error('Question text not found in question object:', question);
         document.getElementById('question-text').textContent = 'Error: Question text not available.';
