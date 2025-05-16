@@ -7,8 +7,11 @@ and defines the FastAPI REST endpoints.
 
 from typing import List, Optional, Dict, Any
 from fastapi import FastAPI, HTTPException, status
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 import uvicorn
+import os
 
 from quizmaster.services.quiz_bot import QuizBot
 from quizmaster.models.quiz import Quiz
@@ -60,6 +63,16 @@ app = FastAPI(
     description="REST API for the QuizMaster application",
     version="1.0.0"
 )
+
+# Mount static files directory
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+# Add a route for favicon.ico
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    favicon_path = os.path.join(static_dir, "favicon.ico")
+    return FileResponse(favicon_path)
 
 # In-memory storage for quizzes
 quizzes = {}
