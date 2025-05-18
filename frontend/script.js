@@ -292,10 +292,10 @@ function showQuestion(index) {
     // Update question text
     // The backend sends the question text in the 'text' property
     if (question && question.text) {
-        document.getElementById('question-text').textContent = question.text;
+        document.getElementById('quiz-question-text').textContent = question.text;
     } else {
         console.error('Question text not found in question object:', question);
-        document.getElementById('question-text').textContent = 'Error: Question text not available.';
+        document.getElementById('quiz-question-text').textContent = 'Error: Question text not available.';
     }
 
     // Render answer options
