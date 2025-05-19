@@ -30,6 +30,12 @@ QuizMaster/
 └── .junie/                 # Project guidelines and documentation
 ```
 
+## Prerequisites
+
+- Python 3.8 or higher
+- Virtual environment (already set up in the `.venv` directory)
+- Node.js (for running the frontend server)
+
 ## Getting Started
 
 1. Clone this repository
@@ -50,25 +56,65 @@ QuizMaster/
 
 ## Running the Application
 
-### Interactive Quiz Bot (CLI)
+### Backend (REST API)
 
-After setting up the environment, you can run the interactive quiz bot:
+The backend is a FastAPI application that runs on port 8091.
 
-```bash
-# From the project root
-python -m src.quizmaster.main
-```
+#### Using the Run Script (Recommended)
 
-### REST API Server
-
-QuizMaster now provides a REST API using FastAPI. To run the API server:
+The easiest way to run the backend is to use the provided run script:
 
 ```bash
-# From the project root
-python -m src.quizmaster.main
+# From the project root directory
+./scripts/run_app.sh
 ```
 
-The API server will start at http://localhost:8000. You can access the interactive API documentation at http://localhost:8000/docs.
+This script will:
+- Activate the virtual environment (or create one if it doesn't exist)
+- Install dependencies if needed
+- Start the FastAPI application on port 8091
+
+#### Manual Method
+
+Alternatively, you can start the backend manually:
+
+```bash
+# From the project root directory
+python -m quizmaster.main
+```
+
+This will start the FastAPI application using Uvicorn on `http://localhost:8091`.
+
+You can verify the backend is running by accessing:
+- API root: http://localhost:8091/api
+- API documentation: http://localhost:8091/docs
+
+### Frontend
+
+The frontend is served by a separate Node.js server on port 8090.
+
+To start the frontend server:
+
+```bash
+# From the project root directory
+cd frontend
+node server.js
+```
+
+This will start a simple HTTP server on `http://localhost:8090`.
+
+Once the frontend server is running, you can access the application at:
+
+```
+http://localhost:8090/
+```
+
+The frontend is configured to make API calls to the backend at `http://localhost:8091`.
+
+### Port Configuration
+
+- Backend (REST API): Port 8091
+- Frontend: Port 8090
 
 ## Features
 
@@ -112,7 +158,7 @@ The API server will start at http://localhost:8000. You can access the interacti
 
 ```bash
 curl -X 'POST' \
-  'http://localhost:8000/quizzes' \
+  'http://localhost:8091/quizzes' \
   -H 'Content-Type: application/json' \
   -d '{
   "title": "My Custom Quiz",
@@ -124,7 +170,7 @@ curl -X 'POST' \
 
 ```bash
 curl -X 'POST' \
-  'http://localhost:8000/quizzes/0/questions' \
+  'http://localhost:8091/quizzes/0/questions' \
   -H 'Content-Type: application/json' \
   -d '{
   "text": "What is the capital of France?",
@@ -137,12 +183,62 @@ curl -X 'POST' \
 
 ```bash
 curl -X 'POST' \
-  'http://localhost:8000/quizzes/0/questions/0/submit' \
+  'http://localhost:8091/quizzes/0/questions/0/submit' \
   -H 'Content-Type: application/json' \
   -d '{
   "answer_index": 1
 }'
 ```
+
+## Testing
+
+### Testing the Backend API
+
+The project includes scripts for testing the backend API:
+
+#### Using test_backend.py
+
+The `test_backend.py` script tests all REST API endpoints of the QuizMaster backend:
+
+```bash
+# From the project root directory
+python scripts/test_backend.py
+```
+
+Or, since the script is executable:
+```bash
+./scripts/test_backend.py
+```
+
+Command-line options:
+- `--host HOST`: Specify the host address (default: localhost)
+- `--port PORT`: Specify the port number (default: 8091)
+- `--verbose`: Enable verbose output with detailed request/response information
+- `--no-start`: Don't start the API server (assumes it's already running)
+- `--help`: Show help message and exit
+
+#### Using test_api.py
+
+The `test_api.py` script is another comprehensive test script that:
+- Tests all API endpoints (create quiz, add question, submit answer, etc.)
+- Provides colorful output for better readability
+- Can start the API if it's not already running
+- Handles errors gracefully
+
+```bash
+# From the project root directory
+python scripts/test_api.py
+```
+
+## Troubleshooting
+
+If you encounter any issues:
+
+1. Make sure the virtual environment is activated
+2. Verify all dependencies are installed
+3. Check that no other application is using ports 8090 or 8091
+4. Ensure the API_BASE_URL in frontend/script.js is set to 'http://localhost:8091'
+5. Make sure Node.js is installed for running the frontend server
 
 ## Documentation
 
@@ -150,6 +246,7 @@ For more detailed information, see:
 
 - [Developer Guidelines](.junie/guidelines.md) - Setup instructions and best practices
 - [GitHub Setup Guide](.junie/github_setup.md) - Instructions for setting up this project on GitHub
+- [Running the Application](doc/running_the_application.md) - Detailed instructions for running the application
 
 ## Contributing
 
