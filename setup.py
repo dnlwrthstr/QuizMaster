@@ -6,10 +6,10 @@ from setuptools import setup, find_packages
 
 setup(
     name="quizmaster",
-    version="0.1.0",
+    version="0.2.0",
     description="A Python-based quiz application",
-    author="QuizMaster Team",
-    author_email="example@example.com",
+    author="dnlwrthstr",
+    author_email="dnlwrthstr@gmail.com",
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     python_requires=">=3.8",
