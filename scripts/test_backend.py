@@ -25,6 +25,7 @@ import signal
 import subprocess
 import sys
 import time
+import platform
 from pathlib import Path
 
 # Terminal colors for output
@@ -101,13 +102,25 @@ class BackendTester:
         project_root = script_dir.parent
 
         # Start the API in a subprocess
-        self.api_process = subprocess.Popen(
-            ["python", "-m", "quizmaster.main"],
-            cwd=project_root,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            preexec_fn=os.setsid  # Create a new process group
-        )
+        # Use different process creation flags based on the platform
+        if platform.system() == 'Windows':
+            # Windows doesn't support preexec_fn, use CREATE_NEW_PROCESS_GROUP instead
+            self.api_process = subprocess.Popen(
+                ["python", "-m", "quizmaster.main"],
+                cwd=project_root,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                creationflags=subprocess.CREATE_NEW_PROCESS_GROUP
+            )
+        else:
+            # Unix/Linux/Mac
+            self.api_process = subprocess.Popen(
+                ["python", "-m", "quizmaster.main"],
+                cwd=project_root,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                preexec_fn=os.setsid  # Create a new process group
+            )
 
         # Wait for the API to become available
         if not self.wait_for_api():
@@ -120,7 +133,12 @@ class BackendTester:
         """Stop the API server subprocess."""
         if self.api_process:
             self.print_info("Stopping API server...")
-            os.killpg(os.getpgid(self.api_process.pid), signal.SIGTERM)
+            if platform.system() == 'Windows':
+                # Windows uses a different approach to terminate process groups
+                self.api_process.send_signal(signal.CTRL_BREAK_EVENT)
+            else:
+                # Unix/Linux/Mac
+                os.killpg(os.getpgid(self.api_process.pid), signal.SIGTERM)
             self.api_process.wait()
             self.api_process = None
 
